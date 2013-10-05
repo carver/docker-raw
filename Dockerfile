@@ -29,8 +29,17 @@ USER rawuser
 # check out repo
 RUN git clone https://github.com/densitydesign/raw.git /home/rawuser/raw
 
+# have to manually set $HOME for bower install to work correctly
+ENV HOME /home/rawuser
+
 # install dependencies
 RUN cd /home/rawuser/raw && bower install
+
+#TEMP user HACK FOR OUT OF ORDER
+USER root
+# python to serve files
+RUN apt-get install -y python
+USER rawuser
 
 # go to working directory
 WORKDIR /home/rawuser/raw
