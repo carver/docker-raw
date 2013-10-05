@@ -2,26 +2,39 @@ FROM shykes/nodejs
 
 MAINTAINER Jason Carver <ut96caarrs@snkmail.com>
 
+# get the latest package list
 RUN apt-get update
 
+# install git
 RUN apt-get install -y git
 
-RUN git clone https://github.com/densitydesign/raw.git /opt/raw
+# make sure we have the latest files
+RUN apt-get dist-upgrade
 
-RUN adduser raw --disabled-password
+# make sure npm is up to date
+RUN npm update npm -g
 
-RUN chown raw:raw /opt/raw
+# make sure all npm packages are up to date
+RUN npm update -g
 
-RUN npm update
-
+# install bower
 RUN npm install -g bower
 
-RUN su - raw -c "cd /opt/raw && bower install"
+# add non-root user to run as
+RUN adduser rawuser --disabled-password
 
-WORKDIR /opt/raw
+# run all following commands as rawuser
+USER rawuser
+
+# check out repo
+RUN git clone https://github.com/densitydesign/raw.git /home/rawuser/raw
+
+# install dependencies
+RUN cd /home/rawuser/raw && bower install
+
+# go to working directory
+WORKDIR /home/rawuser/raw
 
 EXPOSE :4000
 
-USER raw
-
-CMD ["npm","start"]
+CMD ["python","-m","SimpleHTTPServer","4000"]
