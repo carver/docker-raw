@@ -5,8 +5,8 @@ MAINTAINER Jason Carver <ut96caarrs@snkmail.com>
 # get the latest package list
 RUN apt-get update
 
-# install git
-RUN apt-get install -y git
+# install dependencies
+RUN apt-get install -y git python
 
 # make sure we have the latest files
 RUN apt-get dist-upgrade
@@ -34,12 +34,6 @@ ENV HOME /home/rawuser
 
 # install dependencies
 RUN cd /home/rawuser/raw && bower install
-
-#TEMP user HACK FOR OUT OF ORDER
-USER root
-# python to serve files
-RUN apt-get install -y python
-USER rawuser
 
 # go to working directory
 WORKDIR /home/rawuser/raw
